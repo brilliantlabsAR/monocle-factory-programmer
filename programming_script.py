@@ -1,9 +1,7 @@
 from datetime import datetime, timezone
-from pathlib import Path
 from shutil import which
 import board
 import digitalio
-import logging
 import neopixel_spi
 import os
 import subprocess
@@ -23,16 +21,6 @@ def show_status(pixel, status):
         raise ValueError("invalid status was given")
 
 
-# Initialise logging
-if not os.path.exists(os.path.expanduser("~") + "/logs"):
-    os.makedirs(os.path.expanduser("~") + "/logs")
-
-logfile = datetime.now(timezone.utc).strftime(
-    os.path.expanduser("~") + "/logs/monocle-programming-session-%Y%m%d-%H%M%S.log"
-)
-
-logging.basicConfig(filename=logfile, level=logging.INFO, format="")
-
 # Run counter
 run = 0
 
@@ -44,22 +32,22 @@ button = digitalio.DigitalInOut(board.D17)
 button.direction = digitalio.Direction.INPUT
 button.pull = digitalio.Pull.UP
 
-logging.info("Starting Brilliant Monocle Programmer")
+print("Starting Brilliant Monocle Programmer")
 show_status(led, "busy")
 
 # Check that the relevant software is installed
 if which("nrfjprog") == None:
-    logging.error("nRF command line tools not found")
+    print("nRF command line tools not found")
     show_status(led, "error")
     exit(1)
 
 if which("JLinkExe") == None:
-    logging.error("J-Link software not found")
+    print("J-Link software not found")
     show_status(led, "error")
     exit(1)
 
 if which("openFPGALoader") == None:
-    logging.error("Open FPGA Loader not found")
+    print("Open FPGA Loader not found")
     show_status(led, "error")
     exit(1)
 
@@ -69,9 +57,7 @@ os.system("stty -echo")
 # Forever
 while True:
     try:
-        logging.info(
-            "\nReady. Press button to start programming. Press <Ctrl-C> to exit"
-        )
+        print("\nReady. Press button to start programming. Press <Ctrl-C> to exit")
         show_status(led, "ready")
 
         # Wait until the button is pressed
@@ -86,13 +72,13 @@ while True:
 
         now = datetime.now(timezone.utc).strftime("%d/%m/%Y, %H:%M:%S")
         run += 1
-        logging.info(f"Starting programming. Run {run} at {now}")
+        print(f"Starting programming. Run {run} at {now}")
         show_status(led, "busy")
 
-        logging.info("Erasing nRF52 to flash temporary binary")
+        print("Erasing nRF52 to flash temporary binary")
         subprocess.run(["nrfjprog", "--recover", "-q"], check=True)
 
-        logging.info("Flashing temporary nRF52 binary")
+        print("Flashing temporary nRF52 binary")
         subprocess.run(
             [
                 "nrfjprog",
@@ -105,10 +91,10 @@ while True:
             check=True,
         )
 
-        logging.info("Waiting for FPGA power rails to configure")
+        print("Waiting for FPGA power rails to configure")
         time.sleep(2)
 
-        logging.info("Flashing FPGA image")
+        print("Flashing FPGA image")
         subprocess.run(
             [
                 "openFPGALoader",
@@ -126,10 +112,10 @@ while True:
             stdout=subprocess.DEVNULL,
         )
 
-        logging.info("Erasing nRF52 to flash final binary")
+        print("Erasing nRF52 to flash final binary")
         subprocess.run(["nrfjprog", "--recover", "-q"], check=True)
 
-        logging.info("Flashing final nRF52 binary")
+        print("Flashing final nRF52 binary")
         subprocess.run(
             [
                 "nrfjprog",
@@ -142,7 +128,7 @@ while True:
             check=True,
         )
 
-        logging.info("Sucessfully programmed Monocle")
+        print("Sucessfully programmed Monocle")
         show_status(led, "success")
         time.sleep(3)
 
@@ -150,11 +136,11 @@ while True:
         break
 
     except Exception as e:
-        logging.error(e)
+        print(e)
         show_status(led, "error")
         time.sleep(3)
         pass
 
 # Exit
-logging.info("Exiting")
+print("Exiting")
 os.system("stty echo")
