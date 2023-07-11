@@ -80,7 +80,7 @@ sudo sh -c 'dpkg --fsys-tarfile /opt/nrf-command-line-tools/share/JLink_Linux_V7
 
 ```sh
 sudo apt install python3-pip
-pip3 install rpi_ws281x adafruit-circuitpython-neopixel-spi
+sudo pip3 install rpi_ws281x adafruit-circuitpython-neopixel-spi
 ```
 
 1. Enable SPI via `raspi-config` and enable user group:
@@ -114,14 +114,19 @@ wget -O ~/programming_script.py \
   https://raw.githubusercontent.com/brilliantlabsAR/monocle-factory-programmer/main/programming_script.py
 ```
 
-1. Set up the system to run the file on power on
+1. Configure the system to run the script upon power on:
 
 ```sh
+sudo nano /etc/rc.local
+
+# Add this line before "exit 0"
+python /home/<USER>/programming_script.py &
 ```
 
-1. Make the system read only
+1. Configure the system as read only to prevent corruption if it's unplugged:
 
 ```sh
+
 ```
 
 1. Restart!

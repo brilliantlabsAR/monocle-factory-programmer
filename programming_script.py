@@ -1,12 +1,13 @@
-from shutil import which
 from datetime import datetime, timezone
 from pathlib import Path
+from shutil import which
+import board
+import digitalio
+import logging
+import neopixel_spi
+import os
 import subprocess
 import time
-import board
-import neopixel_spi
-import digitalio
-import os
 
 
 def show_status(pixel, status):
@@ -18,11 +19,19 @@ def show_status(pixel, status):
         pixel.fill([0, 255, 0, 0])
     elif status == "error":
         pixel.fill([255, 0, 0, 0])
-    elif status == "none":
-        pixel.fill([0, 0, 50, 0])
     else:
         raise ValueError("invalid status was given")
 
+
+# Initialise logging
+if not os.path.exists(os.path.expanduser("~") + "/logs"):
+    os.makedirs(os.path.expanduser("~") + "/logs")
+
+logfile = datetime.now(timezone.utc).strftime(
+    os.path.expanduser("~") + "/logs/monocle-programming-session-%Y%m%d-%H%M%S.log"
+)
+
+logging.basicConfig(filename=logfile, level=logging.INFO, format="")
 
 # Run counter
 run = 0
@@ -35,22 +44,22 @@ button = digitalio.DigitalInOut(board.D17)
 button.direction = digitalio.Direction.INPUT
 button.pull = digitalio.Pull.UP
 
-print("Starting Brilliant Monocle Programmer")
+logging.info("Starting Brilliant Monocle Programmer")
 show_status(led, "busy")
 
 # Check that the relevant software is installed
 if which("nrfjprog") == None:
-    print("nRF command line tools not found")
+    logging.error("nRF command line tools not found")
     show_status(led, "error")
     exit(1)
 
 if which("JLinkExe") == None:
-    print("J-Link software not found")
+    logging.error("J-Link software not found")
     show_status(led, "error")
     exit(1)
 
 if which("openFPGALoader") == None:
-    print("Open FPGA Loader not found")
+    logging.error("Open FPGA Loader not found")
     show_status(led, "error")
     exit(1)
 
@@ -60,7 +69,9 @@ os.system("stty -echo")
 # Forever
 while True:
     try:
-        print("\nReady. Press button to start programming. Press <Ctrl-C> to exit")
+        logging.info(
+            "\nReady. Press button to start programming. Press <Ctrl-C> to exit"
+        )
         show_status(led, "ready")
 
         # Wait until the button is pressed
@@ -75,13 +86,13 @@ while True:
 
         now = datetime.now(timezone.utc).strftime("%d/%m/%Y, %H:%M:%S")
         run += 1
-        print(f"Starting programming. Run {run} at {now}")
+        logging.info(f"Starting programming. Run {run} at {now}")
         show_status(led, "busy")
 
-        print("Erasing nRF52 to flash temporary binary")
+        logging.info("Erasing nRF52 to flash temporary binary")
         subprocess.run(["nrfjprog", "--recover", "-q"], check=True)
 
-        print("Flashing temporary nRF52 binary")
+        logging.info("Flashing temporary nRF52 binary")
         subprocess.run(
             [
                 "nrfjprog",
@@ -94,10 +105,10 @@ while True:
             check=True,
         )
 
-        print("Waiting for FPGA power rails to configure")
+        logging.info("Waiting for FPGA power rails to configure")
         time.sleep(2)
 
-        print("Flashing FPGA image")
+        logging.info("Flashing FPGA image")
         subprocess.run(
             [
                 "openFPGALoader",
@@ -115,10 +126,10 @@ while True:
             stdout=subprocess.DEVNULL,
         )
 
-        print("Erasing nRF52 to flash final binary")
+        logging.info("Erasing nRF52 to flash final binary")
         subprocess.run(["nrfjprog", "--recover", "-q"], check=True)
 
-        print("Flashing final nRF52 binary")
+        logging.info("Flashing final nRF52 binary")
         subprocess.run(
             [
                 "nrfjprog",
@@ -131,7 +142,7 @@ while True:
             check=True,
         )
 
-        print("Sucessfully programmed Monocle")
+        logging.info("Sucessfully programmed Monocle")
         show_status(led, "success")
         time.sleep(3)
 
@@ -139,12 +150,11 @@ while True:
         break
 
     except Exception as e:
-        print(e)
+        logging.error(e)
         show_status(led, "error")
         time.sleep(3)
         pass
 
 # Exit
-print("Exiting")
-show_status(led, "none")
+logging.info("Exiting")
 os.system("stty echo")
