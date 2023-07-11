@@ -9,14 +9,14 @@ import time
 
 
 def show_status(pixel, status):
-    if status == "ready":
-        pixel.fill([0, 0, 0, 255])
-    elif status == "busy":
+    if status == "programming":
         pixel.fill([255, 150, 0, 0])
     elif status == "success":
         pixel.fill([0, 255, 0, 0])
-    elif status == "error":
+    elif status == "failure":
         pixel.fill([255, 0, 0, 0])
+    elif status == "check-jig":
+        pixel.fill([0, 0, 255, 0])
     else:
         raise ValueError("invalid status was given")
 
@@ -33,23 +33,23 @@ button.direction = digitalio.Direction.INPUT
 button.pull = digitalio.Pull.UP
 
 print("Starting Brilliant Monocle Programmer")
-show_status(led, "busy")
+show_status(led, "check-jig")
 
 # Check that the relevant software is installed
 if which("nrfjprog") == None:
     print("nRF command line tools not found")
-    show_status(led, "error")
     exit(1)
 
 if which("JLinkExe") == None:
     print("J-Link software not found")
-    show_status(led, "error")
     exit(1)
 
 if which("openFPGALoader") == None:
     print("Open FPGA Loader not found")
-    show_status(led, "error")
     exit(1)
+
+# Set the initial LED to success to show it's ready
+show_status(led, "success")
 
 # Disable echos
 os.system("stty -echo")
@@ -58,7 +58,6 @@ os.system("stty -echo")
 while True:
     try:
         print("\nReady. Press button to start programming. Press <Ctrl-C> to exit")
-        show_status(led, "ready")
 
         # Wait until the button is pressed
         while button.value == 1:
@@ -73,7 +72,7 @@ while True:
         now = datetime.now(timezone.utc).strftime("%d/%m/%Y, %H:%M:%S")
         run += 1
         print(f"Starting programming. Run {run} at {now}")
-        show_status(led, "busy")
+        show_status(led, "programming")
 
         print("Erasing nRF52 to flash temporary binary")
         subprocess.run(["nrfjprog", "--recover", "-q"], check=True)
@@ -137,10 +136,11 @@ while True:
 
     except Exception as e:
         print(e)
-        show_status(led, "error")
+        show_status(led, "failure")
         time.sleep(3)
         pass
 
 # Exit
 print("Exiting")
+show_status(led, "check-jig")
 os.system("stty echo")

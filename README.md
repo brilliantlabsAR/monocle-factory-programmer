@@ -4,12 +4,16 @@ This is the jig used to program Monocles at the factory. Internally, it contains
 
 ## Operation:
 
-Upon power-on, the jig automatically launches the programming application. Wait for the **White** LED to illuminate, and then press the button to initiate the programming process.
+Upon power-on, the jig automatically launches the programming application. Wait for the **Green** LED to illuminate, and then press the button to initiate the programming process.
 
-- **White:** Ready. Press the button to start programming.
-- **Amber:** Busy. The board is being programmed.
+During programming, the LED will become **Amber**. **DO NOT** remove the Monocle board during this period, otherwise it could damage the FPGA. After some moments, the LED will change color to indicate the status of programming:
+
 - **Green:** Success: The board was successfully programmed.
-- **Red:** Failure: The board could not be programmed.
+- **Red:** Failure: The board is bad, and could not be programmed.
+
+The Monocle board can now be removed, and another one inserted. Press the button again to start a new programming run.
+
+A **Blue** LED means there was an error with the programming jig internally. In this case, you can try to restart it, or check the logs.
 
 ![Image of the Monocle factory programming jig](#)
 
