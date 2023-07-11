@@ -8,6 +8,11 @@ import subprocess
 import time
 
 
+class JigErrorException(Exception):
+    "Raised if there was an error with installed tools, or programmers"
+    pass
+
+
 def show_status(pixel, status):
     if status == "programming":
         pixel.fill([255, 150, 0, 0])
@@ -37,16 +42,13 @@ show_status(led, "check-jig")
 
 # Check that the relevant software is installed
 if which("nrfjprog") == None:
-    print("nRF command line tools not found")
-    exit(1)
+    raise JigErrorException("nRF command line tools not found")
 
 if which("JLinkExe") == None:
-    print("J-Link software not found")
-    exit(1)
+    raise JigErrorException("J-Link software not found")
 
 if which("openFPGALoader") == None:
-    print("Open FPGA Loader not found")
-    exit(1)
+    raise JigErrorException("Open FPGA Loader not found")
 
 # Set the initial LED to success to show it's ready
 show_status(led, "success")
@@ -129,15 +131,18 @@ while True:
 
         print("Sucessfully programmed Monocle")
         show_status(led, "success")
-        time.sleep(3)
 
     except KeyboardInterrupt:
         break
 
+    except JigErrorException as e:
+        print(e)
+        show_status(led, "check-jig")
+        pass
+
     except Exception as e:
         print(e)
         show_status(led, "failure")
-        time.sleep(3)
         pass
 
 # Exit
