@@ -94,8 +94,8 @@ while True:
             check=True,
         )
 
-        print("Waiting for rails to stabilize")
-        time.sleep(1)
+        print("Waiting for FPGA power rails to configure")
+        time.sleep(2)
 
         print("Flashing FPGA image")
         subprocess.run(
