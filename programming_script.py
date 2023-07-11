@@ -66,10 +66,10 @@ while True:
             pass
 
         if subprocess.check_output(["nrfjprog", "-i"]) == b"":
-            raise Exception("nRF52 programmer not connected")
+            raise JigErrorException("nRF52 programmer not connected")
 
         if b"ft232" not in subprocess.check_output(["openFPGALoader", "--scan-usb"]):
-            raise Exception("FPGA programmer not connected")
+            raise JigErrorException("FPGA programmer not connected")
 
         now = datetime.now(timezone.utc).strftime("%d/%m/%Y, %H:%M:%S")
         run += 1
