@@ -1,10 +1,10 @@
-# Monocle Programming Jig
+# Monocle Factory Programming Jig
 
-This is the jig which is used to program Monocles at the factory. Internally, it contains a Raspberry Pi, J-Link programmer, and FT232 breakout board to program the FPGA. The interface is simply a button to initiate programming, and an LED to display the status.
+This is the jig used to program Monocles at the factory. Internally, it contains a Raspberry Pi, J-Link programmer, and FT232 breakout board for programming the FPGA. The interface consists of a button for initiating programming and an LED for displaying the status.
 
 ## Operation:
 
-Upon power on, the programming jig automatically runs the programming application. Wait for the **White** LED, and press the button to start programming.
+Upon power-on, the jig automatically launches the programming application. Wait for the **White** LED to illuminate, and then press the button to initiate the programming process.
 
 - **White:** Ready. Press the button to start programming.
 - **Amber:** Busy. The board is being programmed.
@@ -13,15 +13,15 @@ Upon power on, the programming jig automatically runs the programming applicatio
 
 ![Image of the Monocle factory programming jig](#)
 
-## How the jig is built:
+## How it's built:
 
 ### Assembly
 
 ### Raspberry Pi Setup:
 
-1. Using [Raspberry Pi Imager](https://www.raspberrypi.com/software/), install Raspberry Pi OS Lite (64bit).
+1. Install Raspberry Pi OS Lite (64bit), using the [Raspberry Pi Imager](https://www.raspberrypi.com/software/).
 
-1. SSH to the Raspberry Pi over your network:
+1. Connect to the Raspberry Pi via SSH over your network:
 
 ```sh
 ssh brilliant@brilliant.local
@@ -102,7 +102,7 @@ curl -s https://api.github.com/repos/brilliantlabsAR/monocle-micropython/release
   | tr -d \" \
   | wget -O ~/monocle_micropython_latest.hex -i -
 
-# TODO change this to the latest, once the final image is ready
+# TODO change this to the latest release, once it's ready
 wget -O ~/monocle_fpga_image_latest.fs \
   https://github.com/brilliantlabsAR/monocle-fpga/releases/download/v230117/fpga_proj.fs
 ```

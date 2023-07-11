@@ -112,7 +112,8 @@ while True:
                 "monocle_fpga_image_latest.fs",
             ],
             check=True,
-        )  # , stdout=subprocess.DEVNULL)
+            stdout=subprocess.DEVNULL,
+        )
 
         print("Erasing nRF52 to flash final binary")
         subprocess.run(["nrfjprog", "--recover", "-q"], check=True)
