@@ -8,12 +8,12 @@ Upon power-on, the jig automatically launches the programming application. Wait 
 
 During programming, the LED will become **Amber**. **DO NOT** remove the Monocle board during this period, otherwise it could damage the FPGA. After some moments, the LED will change color to indicate the status of programming:
 
-- **Green:** Success: The board was successfully programmed.
-- **Red:** Failure: The board is bad, and could not be programmed.
+- **Green:** The board was successfully programmed.
+- **Red:** The board is bad, and could not be programmed.
 
 The Monocle board can now be removed, and another one inserted. Press the button again to start a new programming run.
 
-A **Blue** LED means there was an error with the programming jig internally. In this case, you can try to restart it, or check the logs.
+A **Blue** LED means there was an error with the programming jig. In this case, try to restart it, or check the logs.
 
 ![Image of the Monocle factory programming jig](#)
 
@@ -118,14 +118,14 @@ wget -O ~/programming_script.py \
   https://raw.githubusercontent.com/brilliantlabsAR/monocle-factory-programmer/main/programming_script.py
 ```
 
-1. Configure the system to run the script upon power on:
+1. Configure the user's `.bashrc` to run the script upon power on:
 
 ```sh
-sudo nano /etc/rc.local
-
-# Add this line before "exit 0"
-python /home/<USER>/programming_script.py &
+mkdir logs
+echo python ~/programming_script.py '>>' ~/logs/'$(date -u +monocle-programming-session-%Y%m%d-%H%M%S.log)' >> ~/.bashrc
 ```
+
+1. Open `raspi-config` and enable `Console Autologin` under `System Options` -> `Boot / Auto Login`.
 
 1. Configure the system as read only to prevent corruption if it's unplugged:
 
