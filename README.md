@@ -121,20 +121,11 @@ wget -O ~/programming_script.py \
 1. Configure the user's `.bashrc` to run the script upon power on:
 
 ```sh
-mkdir logs
-echo python ~/programming_script.py '>>' ~/logs/'$(date -u +monocle-programming-session-%Y%m%d-%H%M%S.log)' >> ~/.bashrc
+echo python ~/programming_script.py >> ~/.bashrc
 ```
 
 1. Open `raspi-config` and enable `Console Autologin` under `System Options` -> `Boot / Auto Login`.
 
-1. Configure the system as read only to prevent corruption if it's unplugged:
+1. Open `raspi-config` and enable `Overlay File System` under `Performance Options`.
 
-```sh
-
-```
-
-1. Restart!
-
-```sh
-sudo reboot now
-```
+1. Restart and hit the button to see if it worked!
