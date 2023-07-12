@@ -21,6 +21,8 @@ A **Blue** LED means there was an error with the programming jig. In this case, 
 
 ### Assembly
 
+![Image of the Monocle Programming Jig Wiring Diagram](/images/wiring-diagram.drawio.png)
+
 ### Raspberry Pi Setup:
 
 1. Install Raspberry Pi OS Lite (64bit), using the [Raspberry Pi Imager](https://www.raspberrypi.com/software/).
