@@ -6,20 +6,33 @@ This is the jig used to program Monocles at the factory. Internally, it contains
 
 Upon power-on, the jig automatically launches the programming application. Wait for the **Green** LED to illuminate, and then press the button to initiate the programming process.
 
-During programming, the LED will become **Amber**. **DO NOT** remove the Monocle board during this period, otherwise it could damage the FPGA. After some moments, the LED will change color to indicate the status of programming:
+During programming, the LED will become **Amber**. **DO NOT** remove the Monocle board during this period, otherwise it could damage the FPGA. 
+
+After some moments, the LED will change color to indicate the status of programming:
 
 - **Green:** The board was successfully programmed.
 - **Red:** The board is bad, and could not be programmed.
+- **Blue** There was an error with the programming jig. Re-power the jig, or check the internal wiring.
 
 The Monocle board can now be removed, and another one inserted. Press the button again to start a new programming run.
-
-A **Blue** LED means there was an error with the programming jig. In this case, try to restart it, or check the logs.
 
 ![Image of the Monocle factory programming jig](#)
 
 ## How it's built:
 
-### Assembly
+We built the jig using an off-the-shelf programming jig kit that can be purchased from websites like Alibaba and Taobao. These kits come in different shapes and sizes and can be customized with programmers, buttons, switches, and more. The kit we used even included some.
+
+After assembling the bare jig, we added the electronics and 3D printed a PCB holder designed for the Monocle board. We also incorporated a "bed-of-nails" style array of pogo-pins that make contact with the PCB when the lever is dropped.
+
+### Pogo-Pin Array:
+
+![Image of the Monocle programmer pogo-pin array](#)
+
+### 3D Printed PCB Holder
+
+![Image of the 3D printed Monocle PCB holder](#)
+
+### Wiring Diagram:
 
 ![Image of the Monocle Programming Jig Wiring Diagram](/images/wiring-diagram.drawio.png)
 
