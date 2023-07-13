@@ -105,7 +105,7 @@ while True:
                 "0x0100481b",
                 "--freq",
                 "1000000",
-                "--pins=TXD:RXD:DTR:RTS",
+                "--pins=TXD:RXD:DTR:RTS",  # Order is: TDI:TDO:TCK:TMS
                 "--write-flash",
                 "monocle_fpga_image_latest.fs",
             ],
